@@ -18,13 +18,12 @@ interface RequestPayload {
   presence_penalty: number;
 }
 
+const API_KEY = process.env.OPENAI_API_KEY ?? "no_key";
+
 export async function POST(request: Request) {
   try {
-    let API_KEY = process.env.OPENAI_API_KEY ?? "no_key";
-    console.log("alex api key=", API_KEY);
-
     const data: RequestPayload = await request.json();
-    let config = {
+    const config = {
       method: "post",
       maxBodyLength: Infinity,
       url: "https://api.openai.com/v1/chat/completions",
@@ -55,10 +54,11 @@ export async function POST(request: Request) {
 
     const response = await axios.request(config);
     return NextResponse.json(response.data);
-  } catch (error: any) {
+  } catch (error) {
     console.error(error);
     return NextResponse.json({
       message: "Request Error",
+      //@ts-expect-error error is unknown
       error: error.message,
     });
   }
